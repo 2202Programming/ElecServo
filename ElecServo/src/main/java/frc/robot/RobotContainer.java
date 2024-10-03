@@ -14,8 +14,12 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 
 public class RobotContainer {
+  public final ElecServo elec;
   public static void ConfigueCompetition(HID_Xbox_Subsystem dc) {
     OperatorBindings(dc);
+}
+public RobotContainer(){
+  elec = new ElecServo();
 }
 
   private final ElecServo m_exampleSubsystem = new ElecServo();
