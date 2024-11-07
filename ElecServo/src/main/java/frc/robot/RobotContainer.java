@@ -8,20 +8,29 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Move;
 import frc.robot.subsystems.ElecServo;
 import frc.robot.subsystems.hid.HID_Xbox_Subsystem;
+
+import javax.sound.sampled.SourceDataLine;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 
 public class RobotContainer {
+  public final HID_Xbox_Subsystem dc;
   public final ElecServo elec;
-  public static void ConfigueCompetition(HID_Xbox_Subsystem dc) {
-    OperatorBindings(dc);
-}
+  static RobotContainer rc;
 public RobotContainer(){
-  elec = new ElecServo();
+  RobotContainer.rc = this;
+    elec = new ElecServo();
+    dc = new HID_Xbox_Subsystem(0.3, 0.9, 0.05);
+    configureBindings();
 }
 
+public static RobotContainer RC(){
+  System.out.println("here");
+  return rc;
+}
 
   /**
    * Use this method to define your trigger->command mappings. Triggers can be created via the
@@ -32,9 +41,8 @@ public RobotContainer(){
    * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
    * joysticks}.
    */
-
-  static void OperatorBindings(HID_Xbox_Subsystem dc) {
-    System.out.println("bindings reached here");
+private void configureBindings() {
+  System.out.println("GOT HERE");
     var operator = dc.Operator();
     operator.a().whileTrue(new Move());
   }

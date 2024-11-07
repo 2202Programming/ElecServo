@@ -5,26 +5,29 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.ElecServo;
 
 public class Move extends Command {
   /** Creates a new Move. */
+        final ElecServo servo;
   public Move() {
+     servo = RobotContainer.RC().elec;
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
-      ElecServo servo;
   @Override
   public void initialize() {
     System.out.println("MOVING HERE");
-     servo = new ElecServo();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    System.out.println("EEE");
     servo.move();
+    servo.setSetpoint(5.0);
   }
 
   // Called once the command ends or is interrupted.
