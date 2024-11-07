@@ -26,8 +26,8 @@ public class Move extends Command {
   @Override
   public void execute() {
     System.out.println("EEE");
-    servo.move();
-    servo.setSetpoint(5.0);
+    servo.move(1000.0);
+    System.out.println(servo.getDesiredVel());
   }
 
   // Called once the command ends or is interrupted.
