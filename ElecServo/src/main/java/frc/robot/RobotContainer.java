@@ -22,8 +22,6 @@ public RobotContainer(){
   elec = new ElecServo();
 }
 
-  private final ElecServo m_exampleSubsystem = new ElecServo();
-
 
   /**
    * Use this method to define your trigger->command mappings. Triggers can be created via the
@@ -36,6 +34,7 @@ public RobotContainer(){
    */
 
   static void OperatorBindings(HID_Xbox_Subsystem dc) {
+    System.out.println("bindings reached here");
     var operator = dc.Operator();
     operator.a().whileTrue(new Move());
   }

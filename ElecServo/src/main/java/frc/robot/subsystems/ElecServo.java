@@ -11,10 +11,10 @@ import frc.robot.util.PIDFController;
 
 
 public class ElecServo extends SubsystemBase {
-  PIDController pid = new PIDController(0.0, 0.0, 0.0);
-  PIDFController hwAngleVelPID = new PIDFController(0, 0, 0, 0);
-  NeoServo elec = new NeoServo(10, pid, hwAngleVelPID, false);
-  final double AngleGearRatio = 14.0;
+  PIDController pid = new PIDController(1.0, 1.0, 1.0);
+  PIDFController hwAngleVelPID = new PIDFController(1, 1, 1, 1);
+  NeoServo elec = new NeoServo(60, pid, hwAngleVelPID, false);
+  final double AngleGearRatio = 8.0;
   final int STALL_CURRENT = 5;
   final int FREE_CURRENT = 15;
   final double maxVel = 1.0;

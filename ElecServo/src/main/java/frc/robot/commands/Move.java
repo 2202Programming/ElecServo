@@ -17,6 +17,7 @@ public class Move extends Command {
       ElecServo servo;
   @Override
   public void initialize() {
+    System.out.println("MOVING HERE");
      servo = new ElecServo();
   }
 
