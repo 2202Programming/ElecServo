@@ -116,6 +116,7 @@ public class NeoServo implements VelocityControlled {
             null, 0);        
     }
 
+
     // Works now with given motor type and an alt encoder
     public NeoServo(int canID, MotorType motorType,
             PIDController positionPID,
