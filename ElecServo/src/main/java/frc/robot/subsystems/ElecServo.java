@@ -2,11 +2,14 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-
 package frc.robot.subsystems;
 
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkAnalogSensor;
 import com.revrobotics.SparkPIDController;
+import com.revrobotics.CANSparkBase.ControlType;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.NetworkTable;
@@ -14,97 +17,79 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.AnalogEncoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.util.NeoServo;
 import frc.robot.util.PIDFController;
 import edu.wpi.first.wpilibj.AnalogInput;
-
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class ElecServo extends SubsystemBase {
   private SparkAnalogSensor m_analogSensor;
-  private AnalogEncoder analogEncoder = new AnalogEncoder(3); 
-   private SparkPIDController m_pidController;
-  private AnalogInput analogInput = new AnalogInput(0);
-  PIDController pid = new PIDController(1.0, 1.0, 1.0);
-  PIDFController hwAngleVelPID = new PIDFController(1, 1, 1, 1);
-  NeoServo elec = new NeoServo(18, pid, hwAngleVelPID, false);
-  final double AngleGearRatio = 800.0;
-  final int STALL_CURRENT = 5;
-  final int FREE_CURRENT = 15;
-  final double maxVel = 1.0;
-  final double maxAccel = 0.5;
-  final double posTol = 1.0;
-  final double velTol = 1.0;
-  /** Creates a new ElecServo. */
+  private SparkPIDController m_pidController;
+  private static final int deviceID = 0;
+  private CANSparkMax m_motor;
+  public double kP;
+  public double kI;
+  public double kD;
+  public double kIz;
+  public double kFF;
+  public double kMaxOutput;
+  public double kMinOutput;
+
   public ElecServo() {
-  m_analogSensor = elec.getController().getAnalog(SparkAnalogSensor.Mode.kRelative);
-  m_pidController = elec.getController().getPIDController();
-  m_pidController.setFeedbackDevice(m_analogSensor);
-    ntcreate();
-    hwAngleVelPID.copyTo(elec.getController().getPIDController(), 0);
-    elec.setConversionFactor(360.0 / AngleGearRatio) // [deg] for internal encoder behind gears
-              // .setConversionFactor(360.0) // [deg] external encoder on arm shaft
-              .setSmartCurrentLimit(STALL_CURRENT, FREE_CURRENT)
-              .setVelocityHW_PID(maxVel, maxAccel)
-              .setTolerance(posTol, velTol)
-              .setMaxVelocity(maxVel)
-              .burnFlash();
-  }
-  public void updateAnalogPosition() {
-    double analogValue = analogInput.getVoltage();
-    double position = mapAnalogToServo(analogValue);
-    elec.setPosition(position);
-  }
-
-  private double mapAnalogToServo(double analogValue) {
-    return (analogValue / 3.3) * 360.0;
+    m_motor = new CANSparkMax(deviceID, MotorType.kBrushless);
+    m_analogSensor = m_motor.getAnalog(SparkAnalogSensor.Mode.kAbsolute);
+    m_motor.restoreFactoryDefaults();
+    m_pidController = m_motor.getPIDController();
+    m_pidController.setFeedbackDevice(m_analogSensor);
+    kP = 0.1;
+    kI = 1e-4;
+    kD = 1;
+    kIz = 0;
+    kFF = 0;
+    kMaxOutput = 1;
+    kMinOutput = -1;
+    m_pidController.setP(kP);
+    m_pidController.setI(kI);
+    m_pidController.setD(kD);
+    m_pidController.setIZone(kIz);
+    m_pidController.setFF(kFF);
+    m_pidController.setOutputRange(kMinOutput, kMaxOutput);
   }
 
-  public void move(double vel){
-    elec.setVelocityCmd(vel);
-    System.out.println(getDesiredVel());
+  public double getkP() {
+    return m_pidController.getP();
   }
-  public void setSetpoint(double setpoint){
-    elec.setSetpoint(setpoint);
+  public double getkI(){
+    return m_pidController.getI();
   }
-  public void setPosition(double pos){
-    elec.setPosition(pos);
+  public double getkD(){
+    return m_pidController.getD();
   }
-  public double getPos(){
-    updateAnalogPosition();
-    return elec.getPosition();
+  public double getkIz(){
+    return m_pidController.getIZone();
   }
-  public double getDesiredPos(){
-    return elec.getSetpoint();
-  }
-  public double getVel(){
-    return elec.getVelocity();
-  }
-  public double getDesiredVel(){
-    return elec.getVelocityCmd();
+  public double getkFF(){
+    return m_pidController.getFF();
   }
 
-  @Override
-  public void periodic() {
-    ntupdate();
-    // This method will be called once per scheduler run
+  public void setkP(double kP) {
+    m_pidController.setP(kP);
   }
-  NetworkTable table = NetworkTableInstance.getDefault().getTable("elecServo");
-    NetworkTableEntry nt_pos;
-    NetworkTableEntry nt_cmdPos;
-    NetworkTableEntry nt_vel;
-    NetworkTableEntry nt_cmdVel;
-    
-    private void ntcreate(){
-      nt_pos = table.getEntry("pos");
-      nt_cmdPos = table.getEntry("cmdPos");
-      nt_vel = table.getEntry("vel");
-      nt_cmdVel = table.getEntry("cmdVel"); 
-    }
+  public void setkI(double kI){
+    m_pidController.setI(kI);
+  }
+  public void setkD(double kD){
+    m_pidController.setD(kD);
+  }
+  public void setkIz(double kIz){
+    m_pidController.setIZone(kIz);
+  }
+  public void setkFF(double kFF){
+    m_pidController.setFF(kFF);
+  }
 
-    private void ntupdate(){
-      nt_pos.setDouble(getPos());
-      nt_cmdPos.setDouble(getDesiredPos());
-      nt_vel.setDouble(getVel());
-      nt_cmdVel.setDouble(getDesiredVel());
-    }
+  public void setRef(double speed){
+    m_pidController.setReference(speed, ControlType.kVelocity);
   }
+}
