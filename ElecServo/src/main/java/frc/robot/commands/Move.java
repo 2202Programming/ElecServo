@@ -21,14 +21,6 @@ public class Move extends Command {
   @Override
   public void initialize() {
     System.out.println("MOVING HERE");
-    SmartDashboard.putNumber("P Gain", servo.getkP());
-    SmartDashboard.putNumber("I Gain", servo.getkI());
-    SmartDashboard.putNumber("D Gain", servo.getkD());
-    SmartDashboard.putNumber("I Zone", servo.getkIz());
-    SmartDashboard.putNumber("Feed Forward", servo.getkFF());
-    // SmartDashboard.putNumber("Max Output", servo.);
-    // SmartDashboard.putNumber("Min Output", kMinOutput);
-    SmartDashboard.putNumber("Set Rotations", 0.0);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -44,7 +36,9 @@ public class Move extends Command {
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    servo.setRef(0.0);
+  }
 
   // Returns true when the command should end.
   @Override

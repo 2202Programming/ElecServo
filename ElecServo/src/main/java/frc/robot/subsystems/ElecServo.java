@@ -43,9 +43,9 @@ public class ElecServo extends SubsystemBase {
     m_pidController = m_motor.getPIDController();
     m_pidController.setFeedbackDevice(m_analogSensor);
     kP = 0.1;
-    kI = 1e-4;
-    kD = 1;
-    kIz = 0;
+    kI = 0;
+    kD = 0;
+    kIz = 0.0;
     kFF = 0;
     kMaxOutput = 1;
     kMinOutput = -1;
@@ -55,8 +55,27 @@ public class ElecServo extends SubsystemBase {
     m_pidController.setIZone(kIz);
     m_pidController.setFF(kFF);
     m_pidController.setOutputRange(kMinOutput, kMaxOutput);
+    SmartDashboard.putNumber("P Gain", getkP());
+    SmartDashboard.putNumber("I Gain", getkI());
+    SmartDashboard.putNumber("D Gain", getkD());
+    SmartDashboard.putNumber("I Zone", getkIz());
+    SmartDashboard.putNumber("Feed Forward", getkFF());
+    // SmartDashboard.putNumber("Max Output", servo.);
+    // SmartDashboard.putNumber("Min Output", kMinOutput);
+    SmartDashboard.putNumber("Set Rotations", 0.0);
+    SmartDashboard.putNumber("Current Pos", getPosition());
+    SmartDashboard.putNumber("Current Vel", getVelocity());
   }
 
+  @Override
+  public void periodic(){
+    SmartDashboard.putNumber("Current Pos", getPosition());
+    SmartDashboard.putNumber("Current Vel", getVelocity());
+  }
+
+  public double getPosition(){
+    return m_analogSensor.getPosition();
+  }
   public double getkP() {
     return m_pidController.getP();
   }
@@ -87,6 +106,9 @@ public class ElecServo extends SubsystemBase {
   }
   public void setkFF(double kFF){
     m_pidController.setFF(kFF);
+  }
+  public double getVelocity(){
+    return m_analogSensor.getVelocity();
   }
 
   public void setRef(double speed){
