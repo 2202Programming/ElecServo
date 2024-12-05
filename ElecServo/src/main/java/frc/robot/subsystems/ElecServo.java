@@ -26,7 +26,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class ElecServo extends SubsystemBase {
   private SparkAnalogSensor m_analogSensor;
   private SparkPIDController m_pidController;
-  private static final int deviceID = 0;
+  private static final int deviceID = 18;
   private CANSparkMax m_motor;
   public double kP;
   public double kI;
